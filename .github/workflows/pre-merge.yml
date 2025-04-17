@@ -3,7 +3,8 @@ name: Launchable Demo
 on:
   pull_request:
   workflow_dispatch:
-
+env:
+  LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
 jobs:
   PreMergeTest:
     runs-on: ubuntu-latest
@@ -13,7 +14,15 @@ jobs:
         with:
           java-version: 21
           distribution: "adopt"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Launchable command
+        run: pip install --user --upgrade launchable~=1.0
+      - name: Launchable verify2
+        run: launchable verify
       - name: Compile
         run: mvn compile
-      - name: Test
-        run: mvn test
+        with:
+          java-version: 21
+          distribution: "adopt"
